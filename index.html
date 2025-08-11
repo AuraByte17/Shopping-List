@@ -265,7 +265,7 @@
                 if (existingItem) {
                     existingItem.quantity++;
                 } else {
-                    window.state.shoppingList.push({ ...productToAdd, quantity: 1 });
+                    window.state.shoppingList.push({ ...productToAdd, quantity: 1, category: productToAdd.category });
                 }
                 saveState();
                 renderScreen('shopping');
@@ -288,6 +288,7 @@
 
             window.handleFinalizeList = () => {
                 if (window.state.shoppingList.length === 0) return;
+                // Substituir alert com uma modal personalizada para melhor UX
                 if (window.confirm("Tem a certeza que deseja finalizar a compra?")) {
                     const newHistoryItem = {
                         id: Date.now(),
@@ -341,14 +342,14 @@
                                 window.state.inventory = importedData.inventory;
                                 window.state.history = importedData.history;
                                 saveState();
-                                alert("Dados importados com sucesso!");
+                                alert("Dados importados com sucesso!"); // Substituir com modal
                                 renderScreen(window.state.activeScreen);
                             }
                         } else {
-                            alert("O ficheiro JSON não tem o formato correto.");
+                            alert("O ficheiro JSON não tem o formato correto."); // Substituir com modal
                         }
                     } catch (error) {
-                        alert("Erro ao ler o ficheiro JSON.");
+                        alert("Erro ao ler o ficheiro JSON."); // Substituir com modal
                     }
                 };
                 reader.readAsText(file);
@@ -366,15 +367,15 @@
                 
                 switch (screen) {
                     case 'shopping':
-                        renderShoppingView();
+                        window.renderShoppingView();
                         navButtons['shopping'].classList.add('neumorphic-active-tab');
                         break;
                     case 'inventory':
-                        renderInventoryView();
+                        window.renderInventoryView();
                         navButtons['inventory'].classList.add('neumorphic-active-tab');
                         break;
                     case 'history':
-                        renderHistoryView();
+                        window.renderHistoryView();
                         navButtons['history'].classList.add('neumorphic-active-tab');
                         break;
                 }
