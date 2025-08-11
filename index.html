@@ -52,47 +52,47 @@
             const navHistory = document.getElementById('nav-history');
 
             // Funções para gerir o estado da aplicação
-            const state = {
+            window.state = {
                 inventory: [],
                 shoppingList: [],
                 history: [],
                 activeScreen: 'shopping',
             };
 
-            const saveState = () => {
-                localStorage.setItem('inventory', JSON.stringify(state.inventory));
-                localStorage.setItem('shoppingList', JSON.stringify(state.shoppingList));
-                localStorage.setItem('history', JSON.stringify(state.history));
+            window.saveState = () => {
+                localStorage.setItem('inventory', JSON.stringify(window.state.inventory));
+                localStorage.setItem('shoppingList', JSON.stringify(window.state.shoppingList));
+                localStorage.setItem('history', JSON.stringify(window.state.history));
             };
 
-            const loadState = () => {
+            window.loadState = () => {
                 try {
-                    state.inventory = JSON.parse(localStorage.getItem('inventory')) || [];
-                    state.shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
-                    state.history = JSON.parse(localStorage.getItem('history')) || [];
+                    window.state.inventory = JSON.parse(localStorage.getItem('inventory')) || [];
+                    window.state.shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
+                    window.state.history = JSON.parse(localStorage.getItem('history')) || [];
                 } catch (e) {
                     console.error("Falha ao carregar dados do localStorage", e);
                 }
             };
 
             // Funções para renderizar as diferentes vistas
-            const renderShoppingView = () => {
-                const totalCost = state.shoppingList.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2);
+            window.renderShoppingView = () => {
+                const totalCost = window.state.shoppingList.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2);
                 content.innerHTML = `
                     <div class="p-4">
                         <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Lista de Compras</h2>
                         <div class="space-y-4">
-                            ${state.shoppingList.length > 0 ? state.shoppingList.map(item => `
+                            ${window.state.shoppingList.length > 0 ? window.state.shoppingList.map(item => `
                                 <div class="bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="font-bold text-lg text-gray-800">${item.name}</div>
                                         <div class="text-gray-500">€${item.price} / ${item.unit}</div>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="handleUpdateItemQuantity(${item.id}, ${item.quantity - 1})" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-all">-</button>
+                                        <button onclick="window.handleUpdateItemQuantity(${item.id}, ${item.quantity - 1})" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-all">-</button>
                                         <span class="font-semibold text-lg">${item.quantity}</span>
-                                        <button onclick="handleUpdateItemQuantity(${item.id}, ${item.quantity + 1})" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-all">+</button>
-                                        <button onclick="handleRemoveItemFromList(${item.id})" class="ml-2 p-2 rounded-full bg-red-200 hover:bg-red-300 text-red-800 transition-all">
+                                        <button onclick="window.handleUpdateItemQuantity(${item.id}, ${item.quantity + 1})" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-all">+</button>
+                                        <button onclick="window.handleRemoveItemFromList(${item.id})" class="ml-2 p-2 rounded-full bg-red-200 hover:bg-red-300 text-red-800 transition-all">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" /></svg>
                                         </button>
                                     </div>
@@ -104,13 +104,13 @@
                             <span class="text-3xl font-extrabold text-blue-800">€${totalCost}</span>
                         </div>
                         <div class="mt-8 flex justify-between space-x-2">
-                            <button onclick="handleFinalizeList()" class="flex-1 bg-green-500 text-white font-semibold py-4 rounded-xl shadow-md hover:bg-green-600 transition-all">Finalizar Compra</button>
+                            <button onclick="window.handleFinalizeList()" class="flex-1 bg-green-500 text-white font-semibold py-4 rounded-xl shadow-md hover:bg-green-600 transition-all">Finalizar Compra</button>
                         </div>
                         <div class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
                             <h3 class="text-xl font-bold mb-4 text-gray-800">Adicionar do Inventário</h3>
                             <div class="grid grid-cols-2 gap-4">
-                                ${state.inventory.length > 0 ? state.inventory.map(product => `
-                                    <button onclick="handleAddItemToList(${product.id})" class="p-4 rounded-xl border border-gray-300 flex flex-col items-center hover:bg-gray-50 transition-all shadow-sm">
+                                ${window.state.inventory.length > 0 ? window.state.inventory.map(product => `
+                                    <button onclick="window.handleAddItemToList(${product.id})" class="p-4 rounded-xl border border-gray-300 flex flex-col items-center hover:bg-gray-50 transition-all shadow-sm">
                                         <div class="font-semibold">${product.name}</div>
                                         <div class="text-sm text-gray-500">€${product.price} / ${product.unit}</div>
                                     </button>
@@ -121,19 +121,19 @@
                 `;
             };
 
-            const renderInventoryView = () => {
+            window.renderInventoryView = () => {
                 content.innerHTML = `
                     <div class="p-4">
                         <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Inventário</h2>
                         <div class="space-y-4">
-                            ${state.inventory.length > 0 ? state.inventory.map(product => `
+                            ${window.state.inventory.length > 0 ? window.state.inventory.map(product => `
                                 <div class="bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="font-bold text-lg text-gray-800">${product.name}</div>
                                         <div class="text-gray-500">€${product.price} / ${product.unit}</div>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <button onclick="handleDeleteProduct(${product.id})" class="p-2 rounded-full bg-red-200 hover:bg-red-300 text-red-800 transition-all">
+                                        <button onclick="window.handleDeleteProduct(${product.id})" class="p-2 rounded-full bg-red-200 hover:bg-red-300 text-red-800 transition-all">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" /></svg>
                                         </button>
                                     </div>
@@ -164,34 +164,34 @@
                     const price = parseFloat(document.getElementById('product-price').value);
                     const unit = document.getElementById('product-unit').value;
                     if (name && !isNaN(price) && unit) {
-                        handleAddOrUpdateProduct({ name, price, unit, id: Date.now() });
+                        window.handleAddOrUpdateProduct({ name, price, unit, id: Date.now() });
                         productForm.reset();
                     }
                 });
             };
 
-            const renderHistoryView = () => {
+            window.renderHistoryView = () => {
                 content.innerHTML = `
                     <div class="p-4">
                         <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Histórico de Compras</h2>
                         <div class="space-y-4">
-                            ${state.history.length > 0 ? state.history.map(item => `
+                            ${window.state.history.length > 0 ? window.state.history.map(item => `
                                 <div class="bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="font-bold text-lg text-gray-800">${item.date}</div>
                                         <div class="text-gray-500">Total: €${item.total.toFixed(2)}</div>
                                     </div>
-                                    <button onclick="handleRevertList(${item.id})" class="p-2 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 transition-all">
+                                    <button onclick="window.handleRevertList(${item.id})" class="p-2 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 transition-all">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 12a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" /></svg>
                                     </button>
                                 </div>
                             `).join('') : '<p class="text-center text-gray-500">Não há compras no histórico.</p>'}
                         </div>
                         <div class="mt-8 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button onclick="handleExportData()" class="bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-400 transition-all shadow-md">Exportar Dados</button>
+                            <button onclick="window.handleExportData()" class="bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-400 transition-all shadow-md">Exportar Dados</button>
                             <label class="cursor-pointer bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-400 transition-all shadow-md text-center">
                                 Importar Dados
-                                <input type="file" class="hidden" onchange="handleImportData(event)" accept=".json" />
+                                <input type="file" class="hidden" onchange="window.handleImportData(event)" accept=".json" />
                             </label>
                         </div>
                     </div>
@@ -200,81 +200,81 @@
 
             // Funções de manipulação de dados
             window.handleAddOrUpdateProduct = (product) => {
-                const existingProduct = state.inventory.find(p => p.id === product.id);
+                const existingProduct = window.state.inventory.find(p => p.id === product.id);
                 if (existingProduct) {
                     Object.assign(existingProduct, product);
                 } else {
-                    state.inventory.push(product);
+                    window.state.inventory.push(product);
                 }
-                saveState();
-                renderScreen(state.activeScreen);
+                window.saveState();
+                window.renderScreen(window.state.activeScreen);
             };
 
             window.handleDeleteProduct = (id) => {
-                state.inventory = state.inventory.filter(p => p.id !== id);
-                saveState();
-                renderScreen(state.activeScreen);
+                window.state.inventory = window.state.inventory.filter(p => p.id !== id);
+                window.saveState();
+                window.renderScreen(window.state.activeScreen);
             };
 
             window.handleAddItemToList = (productId) => {
-                const productToAdd = state.inventory.find(p => p.id === productId);
+                const productToAdd = window.state.inventory.find(p => p.id === productId);
                 if (!productToAdd) return;
 
-                const existingItem = state.shoppingList.find(item => item.id === productToAdd.id);
+                const existingItem = window.state.shoppingList.find(item => item.id === productToAdd.id);
                 if (existingItem) {
                     existingItem.quantity++;
                 } else {
-                    state.shoppingList.push({ ...productToAdd, quantity: 1 });
+                    window.state.shoppingList.push({ ...productToAdd, quantity: 1 });
                 }
-                saveState();
-                renderScreen(state.activeScreen);
+                window.saveState();
+                window.renderScreen(window.state.activeScreen);
             };
 
             window.handleUpdateItemQuantity = (id, quantity) => {
-                const itemToUpdate = state.shoppingList.find(item => item.id === id);
+                const itemToUpdate = window.state.shoppingList.find(item => item.id === id);
                 if (itemToUpdate) {
                     itemToUpdate.quantity = Math.max(1, quantity);
-                    saveState();
-                    renderScreen(state.activeScreen);
+                    window.saveState();
+                    window.renderScreen(window.state.activeScreen);
                 }
             };
 
             window.handleRemoveItemFromList = (id) => {
-                state.shoppingList = state.shoppingList.filter(item => item.id !== id);
-                saveState();
-                renderScreen(state.activeScreen);
+                window.state.shoppingList = window.state.shoppingList.filter(item => item.id !== id);
+                window.saveState();
+                window.renderScreen(window.state.activeScreen);
             };
 
             window.handleFinalizeList = () => {
-                if (state.shoppingList.length === 0) return;
+                if (window.state.shoppingList.length === 0) return;
                 if (window.confirm("Tem a certeza que deseja finalizar a compra?")) {
                     const newHistoryItem = {
                         id: Date.now(),
                         date: new Date().toLocaleDateString('pt-PT'),
-                        list: state.shoppingList,
-                        total: state.shoppingList.reduce((acc, item) => acc + (item.price * item.quantity), 0),
+                        list: window.state.shoppingList,
+                        total: window.state.shoppingList.reduce((acc, item) => acc + (item.price * item.quantity), 0),
                     };
-                    state.history.unshift(newHistoryItem);
-                    state.shoppingList = [];
-                    saveState();
-                    renderScreen('history');
+                    window.state.history.unshift(newHistoryItem);
+                    window.state.shoppingList = [];
+                    window.saveState();
+                    window.renderScreen('history');
                 }
             };
 
             window.handleRevertList = (historyId) => {
-                const historyItem = state.history.find(item => item.id === historyId);
+                const historyItem = window.state.history.find(item => item.id === historyId);
                 if (historyItem) {
                     if (window.confirm("Isto irá substituir a sua lista atual. Deseja continuar?")) {
-                        state.shoppingList = historyItem.list;
-                        state.history = state.history.filter(item => item.id !== historyId);
-                        saveState();
-                        renderScreen('shopping');
+                        window.state.shoppingList = historyItem.list;
+                        window.state.history = window.state.history.filter(item => item.id !== historyId);
+                        window.saveState();
+                        window.renderScreen('shopping');
                     }
                 }
             };
 
             window.handleExportData = () => {
-                const data = { inventory: state.inventory, history: state.history };
+                const data = { inventory: window.state.inventory, history: window.state.history };
                 const jsonString = JSON.stringify(data, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
                 const url = URL.createObjectURL(blob);
@@ -297,11 +297,11 @@
                         const importedData = JSON.parse(e.target.result);
                         if (importedData.inventory && importedData.history) {
                             if (window.confirm("Isto irá substituir todos os seus dados. Deseja continuar?")) {
-                                state.inventory = importedData.inventory;
-                                state.history = importedData.history;
-                                saveState();
+                                window.state.inventory = importedData.inventory;
+                                window.state.history = importedData.history;
+                                window.saveState();
                                 alert("Dados importados com sucesso!");
-                                renderScreen(state.activeScreen);
+                                window.renderScreen(window.state.activeScreen);
                             }
                         } else {
                             alert("O ficheiro JSON não tem o formato correto.");
@@ -314,23 +314,11 @@
             };
 
             // Funções de navegação
-            const renderScreen = (screen) => {
-                state.activeScreen = screen;
+            window.renderScreen = (screen) => {
+                window.state.activeScreen = screen;
                 navShopping.classList.remove('active-tab');
                 navInventory.classList.remove('active-tab');
                 navHistory.classList.remove('active-tab');
 
                 switch (screen) {
-                    case 'shopping':
-                        renderShoppingView();
-                        navShopping.classList.add('active-tab');
-                        break;
-                    case 'inventory':
-                        renderInventoryView();
-                        navInventory.classList.add('active-tab');
-                        break;
-                    case 'history':
-                        renderHistoryView();
-                        navHistory.classList.add('active-tab');
-                        break;
-  
+                    case 'shopping'
