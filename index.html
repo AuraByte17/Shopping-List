@@ -9,34 +9,45 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f1f5f9;
+            background-color: #e0e0e0;
         }
-        .active-tab {
-            background-color: #dbeafe; /* blue-100 */
-            color: #2563eb; /* blue-600 */
+        .neumorphic-button {
+            box-shadow: 5px 5px 10px #c1c1c1, -5px -5px 10px #ffffff;
+        }
+        .neumorphic-button:active {
+            box-shadow: inset 3px 3px 6px #b8b8b8, inset -3px -3px 6px #ffffff;
+        }
+        .neumorphic-card {
+            box-shadow: 5px 5px 10px #c1c1c1, -5px -5px 10px #ffffff;
+        }
+        .neumorphic-input {
+            box-shadow: inset 3px 3px 6px #b8b8b8, inset -3px -3px 6px #ffffff;
+        }
+        .neumorphic-active-tab {
+            background-color: #A5B4FC; /* Cor de realce azul */
+            color: #312E81;
+            box-shadow: inset 3px 3px 6px #8B94CB, inset -3px -3px 6px #C5D4FF;
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-200 min-h-screen flex flex-col">
 
-    <div id="content" class="flex-grow pb-16">
-        <!-- O conteúdo das diferentes vistas (Lista, Inventário, Histórico) será injetado aqui pelo JavaScript -->
-    </div>
+    <div id="content" class="flex-grow pb-20">
+        </div>
 
-    <!-- Barra de navegação inferior -->
-    <footer class="fixed bottom-0 left-0 right-0 bg-white shadow-xl">
-        <nav class="flex justify-around p-3">
-            <button id="nav-shopping" class="p-3 rounded-xl transition-all text-gray-500">
+    <footer class="fixed bottom-0 left-0 right-0 p-2 bg-gray-200 neumorphic-card rounded-t-2xl">
+        <nav class="flex justify-around">
+            <button id="nav-shopping" class="p-3 m-1 rounded-full transition-all text-gray-700 font-semibold neumorphic-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                 </svg>
             </button>
-            <button id="nav-inventory" class="p-3 rounded-xl transition-all text-gray-500">
+            <button id="nav-inventory" class="p-3 m-1 rounded-full transition-all text-gray-700 font-semibold neumorphic-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h14a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6z" />
                 </svg>
             </button>
-            <button id="nav-history" class="p-3 rounded-xl transition-all text-gray-500">
+            <button id="nav-history" class="p-3 m-1 rounded-full transition-all text-gray-700 font-semibold neumorphic-button">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 12h14M5 16h14" />
                 </svg>
@@ -51,7 +62,6 @@
             const navInventory = document.getElementById('nav-inventory');
             const navHistory = document.getElementById('nav-history');
 
-            // Funções para gerir o estado da aplicação
             window.state = {
                 inventory: [],
                 shoppingList: [],
@@ -59,13 +69,13 @@
                 activeScreen: 'shopping',
             };
 
-            window.saveState = () => {
+            const saveState = () => {
                 localStorage.setItem('inventory', JSON.stringify(window.state.inventory));
                 localStorage.setItem('shoppingList', JSON.stringify(window.state.shoppingList));
                 localStorage.setItem('history', JSON.stringify(window.state.history));
             };
 
-            window.loadState = () => {
+            const loadState = () => {
                 try {
                     window.state.inventory = JSON.parse(localStorage.getItem('inventory')) || [];
                     window.state.shoppingList = JSON.parse(localStorage.getItem('shoppingList')) || [];
@@ -75,42 +85,41 @@
                 }
             };
 
-            // Funções para renderizar as diferentes vistas
             window.renderShoppingView = () => {
                 const totalCost = window.state.shoppingList.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2);
                 content.innerHTML = `
                     <div class="p-4">
-                        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Lista de Compras</h2>
-                        <div class="space-y-4">
+                        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Lista de Compras</h2>
+                        <div class="flex flex-col space-y-2">
                             ${window.state.shoppingList.length > 0 ? window.state.shoppingList.map(item => `
-                                <div class="bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                                <div class="bg-gray-200 p-4 rounded-2xl neumorphic-card flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="font-bold text-lg text-gray-800">${item.name}</div>
                                         <div class="text-gray-500">€${item.price} / ${item.unit}</div>
                                     </div>
                                     <div class="flex items-center space-x-2">
-                                        <button onclick="window.handleUpdateItemQuantity(${item.id}, ${item.quantity - 1})" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-all">-</button>
+                                        <button onclick="handleUpdateItemQuantity(${item.id}, ${item.quantity - 1})" class="p-2 rounded-full neumorphic-button text-gray-700 font-bold">-</button>
                                         <span class="font-semibold text-lg">${item.quantity}</span>
-                                        <button onclick="window.handleUpdateItemQuantity(${item.id}, ${item.quantity + 1})" class="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold transition-all">+</button>
-                                        <button onclick="window.handleRemoveItemFromList(${item.id})" class="ml-2 p-2 rounded-full bg-red-200 hover:bg-red-300 text-red-800 transition-all">
+                                        <button onclick="handleUpdateItemQuantity(${item.id}, ${item.quantity + 1})" class="p-2 rounded-full neumorphic-button text-gray-700 font-bold">+</button>
+                                        <button onclick="handleRemoveItemFromList(${item.id})" class="ml-2 p-2 rounded-full neumorphic-button text-red-500">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" /></svg>
                                         </button>
                                     </div>
                                 </div>
                             `).join('') : '<p class="text-center text-gray-500">A sua lista de compras está vazia.</p>'}
                         </div>
-                        <div class="mt-8 bg-blue-100 p-6 rounded-2xl shadow-lg flex justify-between items-center">
-                            <span class="font-bold text-xl text-blue-800">Total Estimado:</span>
-                            <span class="text-3xl font-extrabold text-blue-800">€${totalCost}</span>
+                        <div class="mt-8 bg-gray-200 p-6 rounded-2xl neumorphic-card flex justify-between items-center">
+                            <span class="font-bold text-xl text-gray-700">Total Estimado:</span>
+                            <span class="text-3xl font-extrabold text-blue-600">€${totalCost}</span>
                         </div>
                         <div class="mt-8 flex justify-between space-x-2">
-                            <button onclick="window.handleFinalizeList()" class="flex-1 bg-green-500 text-white font-semibold py-4 rounded-xl shadow-md hover:bg-green-600 transition-all">Finalizar Compra</button>
+                            <button onclick="handleFinalizeList()" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-4 rounded-xl neumorphic-button">Finalizar Compra</button>
                         </div>
-                        <div class="mt-8 bg-white p-6 rounded-2xl shadow-lg">
+                        <div class="mt-8 bg-gray-200 p-6 rounded-2xl neumorphic-card">
                             <h3 class="text-xl font-bold mb-4 text-gray-800">Adicionar do Inventário</h3>
                             <div class="grid grid-cols-2 gap-4">
                                 ${window.state.inventory.length > 0 ? window.state.inventory.map(product => `
-                                    <button onclick="window.handleAddItemToList(${product.id})" class="p-4 rounded-xl border border-gray-300 flex flex-col items-center hover:bg-gray-50 transition-all shadow-sm">
+                                    <button onclick="handleAddItemToList(${product.id})" class="p-4 rounded-xl neumorphic-button flex flex-col items-center hover:bg-gray-300 transition-all">
                                         <div class="font-semibold">${product.name}</div>
                                         <div class="text-sm text-gray-500">€${product.price} / ${product.unit}</div>
                                     </button>
@@ -124,125 +133,118 @@
             window.renderInventoryView = () => {
                 content.innerHTML = `
                     <div class="p-4">
-                        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Inventário</h2>
+                        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Inventário</h2>
                         <div class="space-y-4">
                             ${window.state.inventory.length > 0 ? window.state.inventory.map(product => `
-                                <div class="bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                                <div class="bg-gray-200 p-4 rounded-2xl neumorphic-card flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="font-bold text-lg text-gray-800">${product.name}</div>
                                         <div class="text-gray-500">€${product.price} / ${product.unit}</div>
                                     </div>
                                     <div class="flex space-x-2">
-                                        <button onclick="window.handleDeleteProduct(${product.id})" class="p-2 rounded-full bg-red-200 hover:bg-red-300 text-red-800 transition-all">
+                                        <button onclick="handleDeleteProduct(${product.id})" class="p-2 rounded-full neumorphic-button text-red-500">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 10-2 0v6a1 1 0 102 0V8z" clip-rule="evenodd" /></svg>
                                         </button>
                                     </div>
                                 </div>
                             `).join('') : '<p class="text-center text-gray-500">O seu inventário está vazio.</p>'}
                         </div>
-                        <form id="product-form" class="bg-white p-6 rounded-2xl shadow-lg mt-8">
+                        <form id="product-form" class="bg-gray-200 p-6 rounded-2xl neumorphic-card mt-8">
                             <h3 class="text-xl font-bold mb-4 text-gray-800">Adicionar Novo Produto</h3>
                             <div class="space-y-4">
-                                <input type="text" id="product-name" placeholder="Nome do produto" class="w-full p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" required />
+                                <input type="text" id="product-name" placeholder="Nome do produto" class="w-full p-3 rounded-full neumorphic-input bg-gray-100 text-gray-700 focus:outline-none" required />
                                 <div class="flex space-x-2">
-                                    <input type="number" step="0.01" id="product-price" placeholder="Preço" class="w-1/2 p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" required />
-                                    <input type="text" id="product-unit" placeholder="Unidade (ex: kg, L)" class="w-1/2 p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all" required />
+                                    <input type="number" step="0.01" id="product-price" placeholder="Preço" class="w-1/2 p-3 rounded-full neumorphic-input bg-gray-100 text-gray-700 focus:outline-none" required />
+                                    <input type="text" id="product-unit" placeholder="Unidade (ex: kg, L)" class="w-1/2 p-3 rounded-full neumorphic-input bg-gray-100 text-gray-700 focus:outline-none" required />
                                 </div>
                             </div>
                             <div class="flex mt-6 space-x-2">
-                                <button type="submit" class="flex-1 bg-blue-500 text-white font-semibold py-3 px-4 rounded-xl hover:bg-blue-600 transition-all shadow-md">Adicionar</button>
+                                <button type="submit" class="flex-1 bg-gray-200 text-gray-700 font-semibold py-3 px-4 rounded-full neumorphic-button hover:bg-gray-300">Adicionar</button>
                             </div>
                         </form>
                     </div>
                 `;
-
-                // Adiciona o event listener ao formulário
                 const productForm = document.getElementById('product-form');
-                productForm.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    const name = document.getElementById('product-name').value;
-                    const price = parseFloat(document.getElementById('product-price').value);
-                    const unit = document.getElementById('product-unit').value;
-                    if (name && !isNaN(price) && unit) {
-                        window.handleAddOrUpdateProduct({ name, price, unit, id: Date.now() });
-                        productForm.reset();
-                    }
-                });
+                if (productForm) {
+                    productForm.addEventListener('submit', (e) => {
+                        e.preventDefault();
+                        const name = document.getElementById('product-name').value;
+                        const price = parseFloat(document.getElementById('product-price').value);
+                        const unit = document.getElementById('product-unit').value;
+                        if (name && !isNaN(price) && unit) {
+                            window.handleAddOrUpdateProduct({ name, price, unit, id: Date.now() });
+                            productForm.reset();
+                        }
+                    });
+                }
             };
 
             window.renderHistoryView = () => {
                 content.innerHTML = `
                     <div class="p-4">
-                        <h2 class="text-3xl font-bold mb-6 text-center text-gray-800">Histórico de Compras</h2>
+                        <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Histórico de Compras</h2>
                         <div class="space-y-4">
                             ${window.state.history.length > 0 ? window.state.history.map(item => `
-                                <div class="bg-white p-4 rounded-2xl shadow-lg flex items-center justify-between">
+                                <div class="bg-gray-200 p-4 rounded-2xl neumorphic-card flex items-center justify-between">
                                     <div class="flex-1">
                                         <div class="font-bold text-lg text-gray-800">${item.date}</div>
                                         <div class="text-gray-500">Total: €${item.total.toFixed(2)}</div>
                                     </div>
-                                    <button onclick="window.handleRevertList(${item.id})" class="p-2 rounded-full bg-blue-200 hover:bg-blue-300 text-blue-800 transition-all">
+                                    <button onclick="handleRevertList(${item.id})" class="p-2 rounded-full neumorphic-button text-blue-500">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M4 12a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1z" /></svg>
                                     </button>
                                 </div>
                             `).join('') : '<p class="text-center text-gray-500">Não há compras no histórico.</p>'}
                         </div>
                         <div class="mt-8 flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4">
-                            <button onclick="window.handleExportData()" class="bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-400 transition-all shadow-md">Exportar Dados</button>
-                            <label class="cursor-pointer bg-gray-300 text-gray-800 font-semibold py-3 px-6 rounded-xl hover:bg-gray-400 transition-all shadow-md text-center">
+                            <button onclick="handleExportData()" class="bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-full neumorphic-button">Exportar Dados</button>
+                            <label class="cursor-pointer bg-gray-200 text-gray-700 font-semibold py-3 px-6 rounded-full neumorphic-button text-center">
                                 Importar Dados
-                                <input type="file" class="hidden" onchange="window.handleImportData(event)" accept=".json" />
+                                <input type="file" class="hidden" onchange="handleImportData(event)" accept=".json" />
                             </label>
                         </div>
                     </div>
                 `;
             };
 
-            // Funções de manipulação de dados
             window.handleAddOrUpdateProduct = (product) => {
-                const existingProduct = window.state.inventory.find(p => p.id === product.id);
-                if (existingProduct) {
-                    Object.assign(existingProduct, product);
-                } else {
-                    window.state.inventory.push(product);
-                }
-                window.saveState();
-                window.renderScreen(window.state.activeScreen);
+                window.state.inventory.push(product);
+                saveState();
+                renderScreen('inventory');
             };
 
             window.handleDeleteProduct = (id) => {
                 window.state.inventory = window.state.inventory.filter(p => p.id !== id);
-                window.saveState();
-                window.renderScreen(window.state.activeScreen);
+                saveState();
+                renderScreen('inventory');
             };
 
             window.handleAddItemToList = (productId) => {
                 const productToAdd = window.state.inventory.find(p => p.id === productId);
                 if (!productToAdd) return;
-
                 const existingItem = window.state.shoppingList.find(item => item.id === productToAdd.id);
                 if (existingItem) {
                     existingItem.quantity++;
                 } else {
                     window.state.shoppingList.push({ ...productToAdd, quantity: 1 });
                 }
-                window.saveState();
-                window.renderScreen(window.state.activeScreen);
+                saveState();
+                renderScreen('shopping');
             };
 
             window.handleUpdateItemQuantity = (id, quantity) => {
                 const itemToUpdate = window.state.shoppingList.find(item => item.id === id);
                 if (itemToUpdate) {
                     itemToUpdate.quantity = Math.max(1, quantity);
-                    window.saveState();
-                    window.renderScreen(window.state.activeScreen);
+                    saveState();
+                    renderScreen('shopping');
                 }
             };
 
             window.handleRemoveItemFromList = (id) => {
                 window.state.shoppingList = window.state.shoppingList.filter(item => item.id !== id);
-                window.saveState();
-                window.renderScreen(window.state.activeScreen);
+                saveState();
+                renderScreen('shopping');
             };
 
             window.handleFinalizeList = () => {
@@ -256,8 +258,8 @@
                     };
                     window.state.history.unshift(newHistoryItem);
                     window.state.shoppingList = [];
-                    window.saveState();
-                    window.renderScreen('history');
+                    saveState();
+                    renderScreen('history');
                 }
             };
 
@@ -267,8 +269,8 @@
                     if (window.confirm("Isto irá substituir a sua lista atual. Deseja continuar?")) {
                         window.state.shoppingList = historyItem.list;
                         window.state.history = window.state.history.filter(item => item.id !== historyId);
-                        window.saveState();
-                        window.renderScreen('shopping');
+                        saveState();
+                        renderScreen('shopping');
                     }
                 }
             };
@@ -299,9 +301,9 @@
                             if (window.confirm("Isto irá substituir todos os seus dados. Deseja continuar?")) {
                                 window.state.inventory = importedData.inventory;
                                 window.state.history = importedData.history;
-                                window.saveState();
+                                saveState();
                                 alert("Dados importados com sucesso!");
-                                window.renderScreen(window.state.activeScreen);
+                                renderScreen(window.state.activeScreen);
                             }
                         } else {
                             alert("O ficheiro JSON não tem o formato correto.");
@@ -312,13 +314,40 @@
                 };
                 reader.readAsText(file);
             };
-
-            // Funções de navegação
-            window.renderScreen = (screen) => {
+            
+            const renderScreen = (screen) => {
                 window.state.activeScreen = screen;
-                navShopping.classList.remove('active-tab');
-                navInventory.classList.remove('active-tab');
-                navHistory.classList.remove('active-tab');
+                const navButtons = {
+                    'shopping': navShopping,
+                    'inventory': navInventory,
+                    'history': navHistory
+                };
 
+                Object.values(navButtons).forEach(btn => btn.classList.remove('neumorphic-active-tab'));
+                
                 switch (screen) {
-                    case 'shopping'
+                    case 'shopping':
+                        renderShoppingView();
+                        navButtons['shopping'].classList.add('neumorphic-active-tab');
+                        break;
+                    case 'inventory':
+                        renderInventoryView();
+                        navButtons['inventory'].classList.add('neumorphic-active-tab');
+                        break;
+                    case 'history':
+                        renderHistoryView();
+                        navButtons['history'].classList.add('neumorphic-active-tab');
+                        break;
+                }
+            };
+
+            navShopping.addEventListener('click', () => renderScreen('shopping'));
+            navInventory.addEventListener('click', () => renderScreen('inventory'));
+            navHistory.addEventListener('click', () => renderScreen('history'));
+
+            loadState();
+            renderScreen('shopping');
+        });
+    </script>
+</body>
+</html>
