@@ -62,6 +62,7 @@
             const navInventory = document.getElementById('nav-inventory');
             const navHistory = document.getElementById('nav-history');
 
+            // Funções para obter um emoji para cada categoria
             const getCategoryEmoji = (category) => {
                 const lowerCaseCategory = category.toLowerCase();
                 if (lowerCaseCategory.includes('alimentação') || lowerCaseCategory.includes('comida') || lowerCaseCategory.includes('comestíveis')) return '🍎';
@@ -95,7 +96,7 @@
                 }
             };
 
-            window.renderShoppingView = () => {
+            const renderShoppingView = () => {
                 const totalCost = window.state.shoppingList.reduce((acc, item) => acc + (item.price * item.quantity), 0).toFixed(2);
                 content.innerHTML = `
                     <div class="p-4">
@@ -140,7 +141,7 @@
                 `;
             };
 
-            window.renderInventoryView = () => {
+            const renderInventoryView = () => {
                 const sortedInventory = [...window.state.inventory].sort((a, b) => a.name.localeCompare(b.name));
                 const inventoryByCategory = sortedInventory.reduce((acc, product) => {
                     const category = product.category || 'Sem Categoria';
@@ -208,7 +209,7 @@
                 }
             };
 
-            window.renderHistoryView = () => {
+            const renderHistoryView = () => {
                 content.innerHTML = `
                     <div class="p-4">
                         <h2 class="text-2xl font-bold mb-4 text-center text-gray-700">Histórico de Compras</h2>
@@ -236,19 +237,19 @@
                 `;
             };
 
-            window.handleAddOrUpdateProduct = (product) => {
+            const handleAddOrUpdateProduct = (product) => {
                 window.state.inventory.push(product);
                 saveState();
                 renderScreen('inventory');
             };
 
-            window.handleDeleteProduct = (id) => {
+            const handleDeleteProduct = (id) => {
                 window.state.inventory = window.state.inventory.filter(p => p.id !== id);
                 saveState();
                 renderScreen('inventory');
             };
 
-            window.handleAddItemToList = (productId) => {
+            const handleAddItemToList = (productId) => {
                 const productToAdd = window.state.inventory.find(p => p.id === productId);
                 if (!productToAdd) return;
                 const existingItem = window.state.shoppingList.find(item => item.id === productToAdd.id);
@@ -261,7 +262,7 @@
                 renderScreen('shopping');
             };
 
-            window.handleUpdateItemQuantity = (id, quantity) => {
+            const handleUpdateItemQuantity = (id, quantity) => {
                 const itemToUpdate = window.state.shoppingList.find(item => item.id === id);
                 if (itemToUpdate) {
                     itemToUpdate.quantity = Math.max(1, quantity);
@@ -270,13 +271,13 @@
                 }
             };
 
-            window.handleRemoveItemFromList = (id) => {
+            const handleRemoveItemFromList = (id) => {
                 window.state.shoppingList = window.state.shoppingList.filter(item => item.id !== id);
                 saveState();
                 renderScreen('shopping');
             };
 
-            window.handleFinalizeList = () => {
+            const handleFinalizeList = () => {
                 if (window.state.shoppingList.length === 0) return;
                 if (window.confirm("Tem a certeza que deseja finalizar a compra?")) {
                     const newHistoryItem = {
@@ -292,7 +293,7 @@
                 }
             };
 
-            window.handleRevertList = (historyId) => {
+            const handleRevertList = (historyId) => {
                 const historyItem = window.state.history.find(item => item.id === historyId);
                 if (historyItem) {
                     if (window.confirm("Isto irá substituir a sua lista atual. Deseja continuar?")) {
@@ -304,7 +305,7 @@
                 }
             };
 
-            window.handleExportData = () => {
+            const handleExportData = () => {
                 const data = { inventory: window.state.inventory, history: window.state.history };
                 const jsonString = JSON.stringify(data, null, 2);
                 const blob = new Blob([jsonString], { type: 'application/json' });
@@ -318,7 +319,7 @@
                 URL.revokeObjectURL(url);
             };
 
-            window.handleImportData = (event) => {
+            const handleImportData = (event) => {
                 const file = event.target.files[0];
                 if (!file) return;
 
@@ -356,25 +357,36 @@
                 
                 switch (screen) {
                     case 'shopping':
-                        window.renderShoppingView();
+                        renderShoppingView();
                         navButtons['shopping'].classList.add('neumorphic-active-tab');
                         break;
                     case 'inventory':
-                        window.renderInventoryView();
+                        renderInventoryView();
                         navButtons['inventory'].classList.add('neumorphic-active-tab');
                         break;
                     case 'history':
-                        window.renderHistoryView();
+                        renderHistoryView();
                         navButtons['history'].classList.add('neumorphic-active-tab');
                         break;
                 }
             };
+            
+            // Atribuir as funções ao objeto global window
+            window.handleAddOrUpdateProduct = handleAddOrUpdateProduct;
+            window.handleDeleteProduct = handleDeleteProduct;
+            window.handleAddItemToList = handleAddItemToList;
+            window.handleUpdateItemQuantity = handleUpdateItemQuantity;
+            window.handleRemoveItemFromList = handleRemoveItemFromList;
+            window.handleFinalizeList = handleFinalizeList;
+            window.handleRevertList = handleRevertList;
+            window.handleExportData = handleExportData;
+            window.handleImportData = handleImportData;
 
             navShopping.addEventListener('click', () => renderScreen('shopping'));
             navInventory.addEventListener('click', () => renderScreen('inventory'));
             navHistory.addEventListener('click', () => renderScreen('history'));
 
-            // Código modificado para garantir o render inicial
+            // Carregar o estado e renderizar a vista inicial
             loadState();
             renderScreen('shopping');
         });
